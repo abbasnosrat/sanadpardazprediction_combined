@@ -38,15 +38,16 @@ sheet_id = "1PNTC8IvqruHs3DWVX6HW30d2TCM6z3PCxtRMA_qep0M"
 sheet_name = "Sheet1"
 url = f'https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}'
 helps = pd.read_csv(url,index_col=0)
-file = st.sidebar.file_uploader("Upload Your Dataset", type=".csv",help=helps.loc["Upload Your Dataset"].Description)
+file = st.sidebar.file_uploader("Upload Your Dataset", type=".xlsx",help=helps.loc["Upload Your Dataset"].Description)
 use_sample_data = st.sidebar.checkbox("Use Sample Data",
                                       help=helps.loc["Use Sample Data"].Description)
 
 # df = pd.read_csv("SalesData.csv") if file is None else pd.read_csv(file)
 try:
-    df = pd.read_csv(file)
+    df = pd.read_excel(file)
     got_data = True
-except:
+except Exception as e:
+    print(e)
     if use_sample_data:
         df = pd.read_csv("./SaleData.csv") 
         got_data = True
@@ -58,7 +59,7 @@ if got_data:
     df["Month"] = df["StrFactDate"].apply(lambda d: int(d.split("/")[1]))
     df = df.groupby(["GoodName","Year", "Month"]).agg({"SaleAmount":"sum"}).reset_index()
     df_v = pd.DataFrame(df["GoodName"].value_counts()).reset_index()
-    print(df_v)
+    
     df_v.columns = ["GoodName", "Count"]
     df_v = df_v.query("Count > 6")
     products = list(df_v.GoodName.unique())

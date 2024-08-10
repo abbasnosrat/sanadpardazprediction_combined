@@ -10,3 +10,5 @@ scipy==1.11.4
 streamlit==1.32.0
 tqdm==4.66.4
 xgboost==2.1.1
+xlrd 
+openpyxl==3.1.0
